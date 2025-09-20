@@ -94,3 +94,58 @@ def delete_product(id):
     db.session.commit()
 
     return jsonify({"message": f"Product with id {id} deleted!"}), 200
+
+@fitting_bp.route("/measurements", methods=['POST'])
+def add_measurement():
+    data = request.get_json()
+    user_id = int(data.get('user_id'))
+    bust = data.get('bust')
+    underbust = data.get('underbust')
+    cup_size = data.get('cup_size')
+    band_size = data.get('band_size', None)
+
+    if not user_id or not bust or not underbust or not cup_size:
+        return jsonify({"error": "All fields are required"}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    measurement = Measurement.query.filter_by(user_id=user_id).first()
+    if measurement:
+        measurement.bust = bust
+        measurement.underbust = underbust
+        measurement.cup_size = cup_size
+        measurement.band_size = band_size
+    else:
+        measurement = Measurement(
+            bust=bust,
+            underbust=underbust,
+            cup_size=cup_size,
+            band_size=band_size,
+            user_id=user_id
+        )
+        db.session.add(measurement)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Measurement added!",
+        "id": measurement.id
+    }), 201
+
+@fitting_bp.route("/measurements/<int:user_id>", methods=["GET"])
+def get_measurement(user_id):
+    measurement = Measurement.query.filter_by(user_id=user_id).first()
+    if not measurement:
+        return jsonify({"error": "No measurements found for this user"}), 404
+
+    return jsonify({
+        "id": measurement.id,
+        "user_id": measurement.user_id,
+        "bust": measurement.bust,
+        "underbust": measurement.underbust,
+        "cup_size": measurement.cup_size,
+        "band_size": measurement.band_size
+    }), 200
+
+

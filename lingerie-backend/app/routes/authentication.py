@@ -4,6 +4,7 @@ from app.db import db
 from app import bcrypt
 import re
 import os
+from flask_jwt_extended import create_access_token
 
 # create student blueprint
 authentication_bp=Blueprint("authentication",__name__,url_prefix="/authentication")
@@ -36,3 +37,28 @@ def register():
         "message": "User created!",
         "user": {"id": new_user.id, "username": new_user.username, "email": new_user.email}
     }), 201
+
+@authentication_bp.route("/login",methods=["POST"])
+def login():
+    data=request.get_json()
+    email=data.get("email")
+    password=data.get("password")
+
+    if not email or not password:
+        return jsonify({"error":"Email and password are required"}),400
+
+    user=User.query.filter_by(email=email).first()
+    if not user or not bcrypt.check_password_hash(user.password_hash,password):
+        return jsonify({"error":"Invalid email or password"}),401
+    # Generate JWT token
+    access_token=create_access_token(identity={"id":user.id,"username":user.username})
+
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+    }), 200

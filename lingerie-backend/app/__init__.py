@@ -2,7 +2,7 @@ from flask import Flask
 from .config import Config
 from .db import db,migrate
 from .models import *
-from .routes import fitting_bp, authentication_bp, order_bp
+from .routes import fitting_bp, authentication_bp, order_bp, user_bp
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
@@ -29,6 +29,7 @@ def create_app():
     app.register_blueprint(fitting_bp)
     app.register_blueprint(authentication_bp)
     app.register_blueprint(order_bp)
+    app.register_blueprint(user_bp)
     # Can also have the url_prefix here
     # app.register_blueprint(fitting_bp,url_prefix="/fitting")
 

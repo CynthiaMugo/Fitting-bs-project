@@ -51,7 +51,7 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password_hash,password):
         return jsonify({"error":"Invalid email or password"}),401
     # Generate JWT token
-    access_token=create_access_token(identity={"id":user.id,"username":user.username})
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify({
         "message": "Login successful",

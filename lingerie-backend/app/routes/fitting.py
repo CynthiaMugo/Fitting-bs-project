@@ -5,4 +5,4 @@ import re
 import os
 
 # create student blueprint
-fitting_bp=Blueprint("student",__name__,url_prefix="/fitting")
+fitting_bp=Blueprint("fitting",__name__,url_prefix="/fitting")

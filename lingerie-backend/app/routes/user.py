@@ -23,9 +23,7 @@ def get_profile():
         "email": user.email
     }), 200
 
-# ------------------------
 # Update user profile
-# ------------------------
 @user_bp.route("/me", methods=["PUT"])
 @jwt_required()
 def update_profile():
@@ -40,7 +38,6 @@ def update_profile():
     username = data.get("username")
     email = data.get("email")
 
-    # Basic validations
     if username:
         if len(username) < 3:
             return jsonify({"error": "Username must be at least 3 characters"}), 400
@@ -55,9 +52,7 @@ def update_profile():
     db.session.commit()
     return jsonify({"message": "Profile updated successfully"}), 200
 
-# ------------------------
 # Delete user account
-# ------------------------
 @user_bp.route("/me", methods=["DELETE"])
 @jwt_required()
 def delete_account():

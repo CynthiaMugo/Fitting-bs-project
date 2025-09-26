@@ -6,6 +6,7 @@ from .routes import fitting_bp, authentication_bp, order_bp, user_bp
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
+from flask_cors import CORS
 
 bcrypt=Bcrypt()
 jwt=JWTManager()
@@ -14,6 +15,8 @@ def create_app():
     app=Flask(__name__)
     app.config.from_object(Config)
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+
+    CORS(app)
 
     # initialize db
     db.init_app(app)
